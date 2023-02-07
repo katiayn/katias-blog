@@ -27,9 +27,9 @@ SECRET_KEY = config('SECRET_KEY')  # <-- Updated!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)  # <-- Updated!
 
-ALLOWED_HOSTS = ['127.0.0.1', '*.fly.dev']  # <-- Updated!
+ALLOWED_HOSTS = ['127.0.0.1', 'katias-blog.fly.dev']  # <-- Updated!
 
-CSRF_TRUSTED_ORIGINS = ['https://*.fly.dev']  # <-- Updated!
+CSRF_TRUSTED_ORIGINS = ['https://katias-blog.fly.dev']  # <-- Updated!
 
 # Application definition
 
