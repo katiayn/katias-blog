@@ -9,25 +9,31 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
-
 from pathlib import Path
-from decouple import config  # <-- Updated!
-from dj_database_url import parse as dburl  # <-- Updated!
+import environ  # <-- Updated!
+from django.core.management.utils import get_random_secret_key
+
+env = environ.Env(  # <-- Updated!
+    # set casting, default value
+    DEBUG=(bool, False),
+)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Take environment variables from .env file
+environ.Env.read_env(BASE_DIR / '.env')  # <-- Updated!
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY')  # <-- Updated!
+SECRET_KEY = env.str('SECRET_KEY', default=get_random_secret_key())  # <-- Updated!
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=False, cast=bool)  # <-- Updated!
+DEBUG = env('DEBUG')  # <-- Updated!
 
-ALLOWED_HOSTS = ['127.0.0.1', 'katias-blog.fly.dev']  # <-- Updated!
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'katias-blog.fly.dev']  # <-- Updated!
 
 CSRF_TRUSTED_ORIGINS = ['https://katias-blog.fly.dev']  # <-- Updated!
 
@@ -39,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'whitenoise.runserver_nostatic',  # <-- Updated!
     'django.contrib.staticfiles',
     # apps
     'blog',
@@ -75,15 +82,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'website.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-default_dburl = 'postgres://postgres:postgres@localhost:5432/blog'
 DATABASES = {
-    'default': config('DATABASE_URL', default=default_dburl, cast=dburl)
+    'default': env.db('DATABASE_URL', default='postgres://postgres:postgres@localhost:5432/blog')
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -103,7 +107,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
@@ -114,7 +117,6 @@ TIME_ZONE = 'Europe/Berlin'  # <-- Updated!
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
